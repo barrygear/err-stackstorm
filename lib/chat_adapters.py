@@ -466,3 +466,16 @@ class SlackChatV3Adapter(SlackChatAdapter):
         else:
             name = f"@{username}"
         return name
+
+    def present_sessions(self, sessions):
+        res = "**Sessions**:\n"
+        for session in sessions:
+            LOG.debug("{}".format(session.attributes().get("UserID", "BAD!")))
+            if session.attributes().get("UserID") == "errbot%service":
+                res += "- {}\n".format(str(session))
+            else:
+                user = self.bot_plugin.build_identifier(
+                    "<@{}>".format(session.attributes().get("UserID"))
+                )
+                res += "- {} {}\n".format(user.nick, str(session))
+        return res
