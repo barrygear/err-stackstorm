@@ -143,7 +143,6 @@ class StackStormAPI(object):
         LOG.info("*** Start stream listener ***")
 
         def listener(callback=None, bot_identity=None):
-
             token = self.accessctl.get_token_by_userid(bot_identity)
             if not token:
                 self.refresh_bot_credentials()
@@ -159,7 +158,7 @@ class StackStormAPI(object):
 
             stream_url = "".join([self.cfg.stream_url, "/stream"])
 
-            stream = sseclient.SSEClient(stream_url, **stream_kwargs)
+            stream = sseclient.SSEClient(stream_url, last_id=None, retry=3000, session=None, chunk_size=1024, **stream_kwargs)
             for event in stream:
                 if event.event == "st2.announcement__{}".format(self.cfg.route_key):
                     LOG.debug(
